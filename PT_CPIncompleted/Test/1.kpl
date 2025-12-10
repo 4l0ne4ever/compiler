@@ -1,0 +1,4 @@
+PROGRAM P1;
+BEGIN
+  (* This is an unclosed comment that should trigger 
+END.

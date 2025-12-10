@@ -1,0 +1,7 @@
+PROGRAM P11;
+PROCEDURE myproc(x : INTEGER);
+BEGIN
+END;
+BEGIN
+  CALL myproc(10, );  (* Invalid arguments - missing second argument *)
+END.

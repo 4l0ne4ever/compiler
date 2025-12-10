@@ -1,0 +1,6 @@
+PROGRAM P12;
+VAR x : INTEGER;
+BEGIN
+  IF x + 10 THEN
+  END;
+END.

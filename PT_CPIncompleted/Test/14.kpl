@@ -1,0 +1,5 @@
+PROGRAM P14;
+VAR x : INTEGER;
+BEGIN
+  x := 10 * * 5;  (* Invalid term - double multiplication operator *)
+END.

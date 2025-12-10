@@ -1,0 +1,78 @@
+(*
+  Ma tran tam giac tren: moi phan tu nam duoi duong cheo chinh bang 0
+  Voi ma tran nxn, kiem tra: neu la tam giac tren in 1, nguoc lai in 0
+  
+  Vi du: Ma tran 4x4
+  [1  1/2  3   0 ]
+  [0   5   0   1 ]
+  [0   0   4  -2 ]
+  [0   0   0   3 ]
+  => Ket qua: 1 (la ma tran tam giac tren)
+  
+  phan tich trai cua chuong trinh:
+  
+  Cac san xuat:
+  1. <program> -> PROGRAM <id> ; <block> .
+  2. <block> -> <constDecl> <varDecl> <stmtList>
+  3. <constDecl> -> CONST <id> = <num> ;
+  4. <varDecl> -> VAR <varList> : <type> ;
+  5. <varList> -> <id> | <id> , <varList>
+  6. <type> -> INTEGER | ARRAY [ <range> ] OF <type>
+  7. <range> -> <num> .. <num>
+  8. <stmtList> -> BEGIN <stmts> END
+  9. <stmts> -> <stmt> | <stmt> ; <stmts>
+  10. <stmt> -> <assign> | <if> | <for> | <write>
+  11. <assign> -> <id> := <expr>
+  12. <if> -> IF <condition> THEN <stmt> | IF <condition> THEN <stmt> ELSE <stmt>
+  13. <for> -> FOR <id> := <expr> TO <expr> DO <stmt>
+  14. <write> -> WRITE ( <expr> )
+  15. <condition> -> <expr> <relOp> <expr>
+  16. <relOp> -> < | > | = | <> | <= | >=
+  17. <expr> -> <term> | <expr> + <term> | <expr> - <term>
+  18. <term> -> <factor> | <term> * <factor>
+  19. <factor> -> <id> | <num> | <id> [ <expr> , <expr> ] | ( <expr> )
+  
+  day so hieu san xuat:
+  1, 2, 4, 5, 5, 5, 5, 6, 8, 9, 10, 20, 17, 19,
+  9, 10, 11, 17, 19,
+  9, 10, 13, 17, 19, 17, 19, 8, 9, 10, 13, 17, 19, 17, 19, 8,
+  9, 10, 20, 17, 19,
+  9, 10, 12, 15, 17, 19, 16, 17, 19, 21, 15, 17, 19, 16, 17, 19,
+  11, 17, 19,
+  9, 10, 14, 17, 19
+  
+  Cac san xuat bo sung:
+  20. <read> -> READ ( <id> )
+  21. AND -> phep toan logic AND
+  
+  Giai thich ngan gon:
+  - 1-2: PROGRAM CheckUpper
+  - 4-6: VAR n,i,j,flag,x: INTEGER
+  - 8-9: BEGIN...END
+  - 20: READ(n)
+  - 11: flag := 1
+  - 13: FOR i := 1 TO n DO BEGIN...END
+  - 13: FOR j := 1 TO n DO BEGIN...END (vong lap long)
+  - 20: READ(x)
+  - 12,15-16,21: IF (i>j) AND (x<>0) THEN flag:=0
+  - 14: WRITE(flag)
+*)
+
+PROGRAM CheckUpper;
+
+VAR n, i, j, flag, x: INTEGER;
+
+BEGIN
+  READ(n);
+  flag := 1;
+  FOR i := 1 TO n DO
+  BEGIN
+    FOR j := 1 TO n DO
+    BEGIN
+      READ(x);
+      IF (i > j) AND (x <> 0) THEN
+        flag := 0;
+    END;
+  END;
+  WRITE(flag);
+END.

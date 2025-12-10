@@ -1,0 +1,9 @@
+Program CommentError;
+(* Testing unclosed comment behavior
+   This comment starts but never ends properly
+Const
+  x = 5;
+Begin
+  (* Another comment
+  Write('Hello');
+End.

@@ -1,0 +1,4 @@
+PROGRAM P7;
+TYPE mytype = ARRAY(. 10 .) OF;
+BEGIN
+END.

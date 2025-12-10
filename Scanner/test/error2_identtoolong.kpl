@@ -1,0 +1,4 @@
+Program IdentTest;
+Begin
+  veryLongIdentifierNameExceedsMax := 42;
+End.

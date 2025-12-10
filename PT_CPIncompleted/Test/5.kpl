@@ -1,0 +1,5 @@
+PROGRAM P5;
+VAR x : INTEGER;
+BEGIN
+  x := 10 @ 5;
+END.

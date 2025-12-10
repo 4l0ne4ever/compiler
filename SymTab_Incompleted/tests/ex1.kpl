@@ -1,0 +1,41 @@
+PROGRAM EX1; 
+TYPE T = INTEGER;
+     ROW = ARRAY(. 20 .) OF T;
+VAR  A : ARRAY(. 20 .) OF ROW;
+     N : INTEGER;
+     I : INTEGER;
+     J : INTEGER;
+     ISUPPER : INTEGER;
+
+PROCEDURE INPUT;
+BEGIN
+  N := READI;
+  FOR I := 1 TO N DO
+    FOR J := 1 TO N DO
+      A(.I.)(.J.) := READI;
+END;
+
+PROCEDURE CHECKUPPER;
+BEGIN
+  ISUPPER := 1;
+  I := 2;
+  WHILE I <= N DO
+    BEGIN
+      J := 1;
+      WHILE J < I DO
+        BEGIN
+          IF A(.I.)(.J.) != 0 THEN
+            ISUPPER := 0;
+          J := J + 1;
+        END;
+      I := I + 1;
+    END;
+END;
+
+BEGIN
+  CALL INPUT;
+  CALL CHECKUPPER;
+  CALL WRITEI(ISUPPER);
+  CALL WRITELN;
+END. 
+

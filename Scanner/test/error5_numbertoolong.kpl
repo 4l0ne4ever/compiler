@@ -1,0 +1,5 @@
+Program NumTest;
+Var x : Integer;
+Begin
+  x := 99999999999999999999;
+End.

@@ -1,0 +1,5 @@
+PROGRAM P13;
+VAR x : INTEGER;
+BEGIN
+  x := 10 + + 5;  (* Invalid expression - double operator *)
+END.

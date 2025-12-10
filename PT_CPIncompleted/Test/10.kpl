@@ -1,0 +1,4 @@
+PROGRAM P10;
+BEGIN
+  := 10;  (* Invalid statement - missing left-hand side *)
+END.

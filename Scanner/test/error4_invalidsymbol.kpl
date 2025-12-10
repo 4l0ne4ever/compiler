@@ -1,0 +1,6 @@
+Program SymbolTest;
+Var x : Integer;
+Begin
+  x := 10;
+  @ # $ %
+End.

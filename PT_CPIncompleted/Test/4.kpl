@@ -1,0 +1,5 @@
+PROGRAM P4;
+VAR c : CHAR;
+BEGIN
+  c := 'a;
+END.

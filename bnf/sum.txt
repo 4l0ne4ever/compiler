@@ -1,0 +1,44 @@
+(*
+  phan tich trai cua chuong trinh:
+  
+  cac san xuat:
+  1. <program> -> PROGRAM <id> ; <block> .
+  2. <block> -> <varDecl> <stmtList>
+  3. <varDecl> -> VAR <varList> : <type> ;
+  4. <varList> -> <id> | <id> , <varList>
+  5. <type> -> INTEGER
+  6. <stmtList> -> BEGIN <stmts> END
+  7. <stmts> -> <stmt> | <stmt> ; <stmts>
+  8. <stmt> -> <assign> | <write>
+  9. <assign> -> <id> := <expr>
+  10. <write> -> WRITE ( <expr> )
+  11. <expr> -> <term> | <term> + <term>
+  12. <term> -> <id> | <num>
+  
+  day so hieu san xuat:
+  1, 2, 3, 4, 4, 4, 5, 6, 7, 8, 9, 11, 12,
+  7, 8, 9, 11, 12,
+  7, 8, 9, 11, 12, 12,
+  7, 8, 10, 11, 12
+  
+  giai thich:
+  - 1: Mo rong <program>
+  - 2: Mo rong <block>
+  - 3-5: Khai bao bien VAR a,b,sum: INTEGER
+  - 6-7: Khoi BEGIN...END
+  - 8-9,11-12: a := 5
+  - 7-9,11-12: b := 10
+  - 7-9,11-12,12: sum := a + b (co phep +)
+  - 7-8,10-12: WRITE(sum)
+*)
+
+PROGRAM SUM2NUMS;
+
+VAR a, b, sum: INTEGER;
+
+BEGIN
+  a := 5;
+  b := 10;
+  sum := a + b;
+  WRITE(sum);
+END.

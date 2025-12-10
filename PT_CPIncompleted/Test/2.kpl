@@ -1,0 +1,5 @@
+PROGRAM P2;
+VAR thisisaverylongidentifiernamethatexceedsthemaximumallowedlength : INTEGER;
+BEGIN
+  thisisaverylongidentifiernamethatexceedsthemaximumallowedlength := 10;
+END.

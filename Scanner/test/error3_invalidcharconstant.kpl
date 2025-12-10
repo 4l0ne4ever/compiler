@@ -1,0 +1,9 @@
+Program CharConstantErrors;
+Var
+  c1, c2, c3 : Char;
+Begin
+  c1 := 'x;     (* Unclosed character literal *)
+  c2 := 'xyz';  (* Multiple characters in literal *)
+  c3 := '';     (* Empty character literal *)
+  c1 := 'A
+End.
