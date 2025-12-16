@@ -1,4 +1,4 @@
-/* 
+/*
  * @copyright (c) 2008, Hedspi, Hanoi University of Technology
  * @author Huu-Duc Nguyen
  * @version 1.0
@@ -9,60 +9,133 @@
 #include "semantics.h"
 #include "error.h"
 
-extern SymTab* symtab;
-extern Token* currentToken;
+extern SymTab *symtab;
+extern Token *currentToken;
 
-Object* lookupObject(char *name) {
-  Scope* scope = symtab->currentScope;
-  Object* obj;
+Object *lookupObject(char *name)
+{
+  Scope *scope = symtab->currentScope;
+  Object *obj;
 
-  while (scope != NULL) {
+  while (scope != NULL)
+  {
     obj = findObject(scope->objList, name);
-    if (obj != NULL) return obj;
+    if (obj != NULL)
+      return obj;
     scope = scope->outer;
   }
   obj = findObject(symtab->globalObjectList, name);
-  if (obj != NULL) return obj;
+  if (obj != NULL)
+    return obj;
   return NULL;
 }
 
-
-void checkFreshIdent(char *name) {
+void checkFreshIdent(char *name)
+{
   if (findObject(symtab->currentScope->objList, name) != NULL)
     error(ERR_DUPLICATE_IDENT, currentToken->lineNo, currentToken->colNo);
 }
-Object* checkDeclaredIdent(char* name) {
-  // TODO
+Object *checkDeclaredIdent(char *name)
+{
+  Object *obj = lookupObject(name);
+  if (obj == NULL)
+  {
+    error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
+  return obj;
 }
 
-Object* checkDeclaredConstant(char* name) {
-  Object* obj = lookupObject(name);
+Object *checkDeclaredConstant(char *name)
+{
+  Object *obj = lookupObject(name);
   if (obj == NULL)
-    error(ERR_UNDECLARED_CONSTANT,currentToken->lineNo, currentToken->colNo);
+  {
+    error(ERR_UNDECLARED_CONSTANT, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
   if (obj->kind != OBJ_CONSTANT)
-    error(ERR_INVALID_CONSTANT,currentToken->lineNo, currentToken->colNo);
+  {
+    error(ERR_INVALID_CONSTANT, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
 
   return obj;
 }
 
-Object* checkDeclaredType(char* name) {
-  Object* obj = lookupObject(name);
+Object *checkDeclaredType(char *name)
+{
+  Object *obj = lookupObject(name);
   if (obj == NULL)
-    error(ERR_UNDECLARED_TYPE,currentToken->lineNo, currentToken->colNo);
+  {
+    error(ERR_UNDECLARED_TYPE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
   if (obj->kind != OBJ_TYPE)
-    error(ERR_INVALID_TYPE,currentToken->lineNo, currentToken->colNo);
+  {
+    error(ERR_INVALID_TYPE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
 
   return obj;
 }
-Object* checkDeclaredVariable(char* name) {
-  // TODO
+Object *checkDeclaredVariable(char *name)
+{
+  Object *obj = lookupObject(name);
+  if (obj == NULL)
+  {
+    error(ERR_UNDECLARED_VARIABLE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
+  if (obj->kind != OBJ_VARIABLE)
+  {
+    error(ERR_INVALID_VARIABLE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
+  return obj;
 }
 
-Object* checkDeclaredProcedure(char* name) {
-  // TODO
+Object *checkDeclaredProcedure(char *name)
+{
+  Object *obj = lookupObject(name);
+  if (obj == NULL)
+  {
+    error(ERR_UNDECLARED_PROCEDURE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
+  if (obj->kind != OBJ_PROCEDURE)
+  {
+    error(ERR_INVALID_PROCEDURE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
+  return obj;
 }
 
-Object* checkDeclaredLValueIdent(char* name) {
-  // TODO
-}
+Object *checkDeclaredLValueIdent(char *name)
+{
+  Object *obj = lookupObject(name);
+  if (obj == NULL)
+  {
+    error(ERR_UNDECLARED_IDENT, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
 
+  switch (obj->kind)
+  {
+  case OBJ_VARIABLE:
+  case OBJ_PARAMETER:
+    return obj;
+  case OBJ_FUNCTION:
+    // Check if the function is the owner of the current scope
+    if (symtab->currentScope->owner == obj)
+      return obj;
+    else
+    {
+      error(ERR_INVALID_RETURN, currentToken->lineNo, currentToken->colNo);
+      return NULL;
+    }
+  default:
+    error(ERR_INVALID_LVALUE, currentToken->lineNo, currentToken->colNo);
+    return NULL;
+  }
+}

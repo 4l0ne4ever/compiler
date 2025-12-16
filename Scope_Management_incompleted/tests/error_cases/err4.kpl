@@ -1,0 +1,7 @@
+PROGRAM ERR4;
+CONST MAX = 10;
+VAR I : INTEGER;
+BEGIN
+   FOR Z := 1 TO MAX DO
+      I := I + 1;
+END.

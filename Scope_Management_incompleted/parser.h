@@ -1,4 +1,4 @@
-/* 
+/*
  * @copyright (c) 2008, Hedspi, Hanoi University of Technology
  * @author Huu-Duc Nguyen
  * @version 1.0
@@ -26,16 +26,16 @@ void compileVarDecl(void);
 void compileSubDecls(void);
 void compileFuncDecl(void);
 void compileProcDecl(void);
-ConstantValue* compileUnsignedConstant(void);
-ConstantValue* compileConstant(void);
-ConstantValue* compileConstant2(void);
-Type* compileType(void);
-Type* compileBasicType(void);
+ConstantValue *compileUnsignedConstant(void);
+ConstantValue *compileConstant(void);
+ConstantValue *compileConstant2(void);
+Type *compileType(void);
+Type *compileBasicType(void);
 void compileParams(void);
 void compileParam(void);
 void compileStatements(void);
 void compileStatement(void);
-Type* compileLValue(void);
+void compileLValue(void);
 void compileAssignSt(void);
 void compileCallSt(void);
 void compileGroupSt(void);
@@ -43,16 +43,16 @@ void compileIfSt(void);
 void compileElseSt(void);
 void compileWhileSt(void);
 void compileForSt(void);
-void compileArgument(Object* param);
-void compileArguments(ObjectNode* paramList);
+void compileArgument(void);
+void compileArguments(void);
 void compileCondition(void);
-Type* compileExpression(void);
-Type* compileExpression2(void);
-Type* compileExpression3(void);
-Type* compileTerm(void);
-Type* compileTerm2(void);
-Type* compileFactor(void);
-Type* compileIndexes(Type* arrayType);
+void compileExpression(void);
+void compileExpression2(void);
+void compileExpression3(void);
+void compileTerm(void);
+void compileTerm2(void);
+void compileFactor(void);
+void compileIndexes(void);
 
 int compile(char *fileName);
 

@@ -1,0 +1,382 @@
+================================================================================
+                   PHÂN TÍCH 13 TRƯỜNG HỢP LỖI NGỮ NGHĨA
+                        KPL COMPILER ERROR CASES
+================================================================================
+
+I. 9 LỖI NGỮ NGHĨA THUẦN TÚY (Pure Semantic Errors)
+================================================================================
+
+1. ERR_UNDECLARED_IDENT (err1.kpl)
+-----------------------------------
+Code:
+   N := Y;
+
+Lỗi: 
+   Identifier 'Y' chưa được khai báo trong bất kỳ scope nào.
+
+Nguyên nhân:
+   - 'Y' được sử dụng trong expression nhưng không có khai báo
+   - Compiler không tìm thấy 'Y' trong scope hiện tại và các outer scopes
+
+Hàm xử lý:
+   1. compileFactor() -> gặp TK_IDENT 'Y'
+   2. Gọi checkDeclaredIdent("Y") (semantics.c:38)
+   3. checkDeclaredIdent() gọi lookupObject("Y") -> return NULL
+   4. Phát hiện obj == NULL -> gọi error(ERR_UNDECLARED_IDENT, ...)
+
+Flow: compileFactor() -> checkDeclaredIdent() -> lookupObject() -> error()
+
+
+2. ERR_UNDECLARED_CONSTANT (err2.kpl)
+--------------------------------------
+Code:
+   CONST 
+      MAX = 10;
+      MIN = NOCONST;
+
+Lỗi:
+   Identifier 'NOCONST' chưa được khai báo làm constant.
+
+Nguyên nhân:
+   - Trong khai báo constant, giá trị phải là số, ký tự, hoặc constant khác
+   - 'NOCONST' không tồn tại trong symbol table
+
+Hàm xử lý:
+   1. compileBlock() -> gặp CONST declaration
+   2. compileConstant() -> compileUnsignedConstant() -> gặp TK_IDENT
+   3. Gọi checkDeclaredConstant("NOCONST") (semantics.c:46)
+   4. checkDeclaredConstant() gọi lookupObject("NOCONST") -> return NULL
+   5. Phát hiện obj == NULL -> gọi error(ERR_UNDECLARED_CONSTANT, ...)
+
+Flow: compileConstant() -> checkDeclaredConstant() -> lookupObject() -> error()
+
+
+3. ERR_UNDECLARED_TYPE (err3.kpl)
+----------------------------------
+Code:
+   VAR A : T2;
+
+Lỗi:
+   Type 'T2' chưa được khai báo.
+
+Nguyên nhân:
+   - Trong khai báo biến, type 'T2' không tồn tại
+   - Chỉ có type 'T' = INTEGER được khai báo
+
+Hàm xử lý:
+   1. compileVarDecl() -> compileType() -> gặp TK_IDENT 'T2'
+   2. Gọi checkDeclaredType("T2") (semantics.c:62)
+   3. checkDeclaredType() gọi lookupObject("T2") -> return NULL
+   4. Phát hiện obj == NULL -> gọi error(ERR_UNDECLARED_TYPE, ...)
+
+Flow: compileType() -> checkDeclaredType() -> lookupObject() -> error()
+
+
+4. ERR_UNDECLARED_VARIABLE (err4.kpl)
+--------------------------------------
+Code:
+   FOR Z := 1 TO MAX DO
+
+Lỗi:
+   Variable 'Z' chưa được khai báo.
+
+Nguyên nhân:
+   - FOR loop yêu cầu control variable phải được khai báo trước
+   - 'Z' không có trong khai báo VAR
+
+Hàm xử lý:
+   1. compileForSt() -> gặp TK_IDENT 'Z'
+   2. Gọi checkDeclaredVariable("Z") (semantics.c:77)
+   3. checkDeclaredVariable() gọi lookupObject("Z") -> return NULL
+   4. Phát hiện obj == NULL -> gọi error(ERR_UNDECLARED_VARIABLE, ...)
+
+Flow: compileForSt() -> checkDeclaredVariable() -> lookupObject() -> error()
+
+
+5. ERR_INVALID_VARIABLE (err5.kpl)
+-----------------------------------
+Code:
+   FOR MAX := 1 TO 10 DO
+
+Lỗi:
+   'MAX' là constant, không phải variable.
+
+Nguyên nhân:
+   - FOR loop yêu cầu control variable là biến có thể gán
+   - 'MAX' được khai báo là CONST, không thể thay đổi giá trị
+
+Hàm xử lý:
+   1. compileForSt() -> gặp TK_IDENT 'MAX'
+   2. Gọi checkDeclaredVariable("MAX") (semantics.c:77)
+   3. checkDeclaredVariable() gọi lookupObject("MAX") -> tìm thấy obj
+   4. Kiểm tra obj->kind != OBJ_VARIABLE -> gọi error(ERR_INVALID_VARIABLE, ...)
+
+Flow: compileForSt() -> checkDeclaredVariable() -> error()
+
+
+6. ERR_INVALID_RETURN (err6.kpl)
+---------------------------------
+Code:
+   FUNCTION F : INTEGER;
+   BEGIN
+      N := 10;
+   END;
+   BEGIN
+      F := 20;    <- Lỗi ở đây
+   END.
+
+Lỗi:
+   Gán giá trị cho function 'F' từ bên ngoài thân hàm.
+
+Nguyên nhân:
+   - Chỉ được phép gán cho tên hàm bên trong thân hàm đó (để set return value)
+   - Ở đây đang gán 'F := 20' từ program scope, không phải từ function F scope
+
+Hàm xử lý:
+   1. compileLValue() -> gặp TK_IDENT 'F'
+   2. Gọi checkDeclaredLValueIdent("F") (semantics.c:115)
+   3. checkDeclaredLValueIdent() gọi lookupObject("F") -> tìm thấy obj (OBJ_FUNCTION)
+   4. Kiểm tra: obj->kind == OBJ_FUNCTION
+   5. Kiểm tra thêm: symtab->currentScope->owner == obj? -> FALSE
+      (currentScope->owner là PROGRAM, không phải F)
+   6. Gọi error(ERR_INVALID_RETURN, ...)
+
+Flow: compileLValue() -> checkDeclaredLValueIdent() -> error()
+
+
+7. ERR_UNDECLARED_PROCEDURE (err7.kpl)
+---------------------------------------
+Code:
+   CALL P(N);
+
+Lỗi:
+   Procedure 'P' chưa được khai báo.
+
+Nguyên nhân:
+   - Lệnh CALL yêu cầu procedure phải được khai báo trước
+   - 'P' không tồn tại trong symbol table
+
+Hàm xử lý:
+   1. compileCallSt() -> gặp KW_CALL và TK_IDENT 'P'
+   2. Gọi checkDeclaredProcedure("P") (semantics.c:99)
+   3. checkDeclaredProcedure() gọi lookupObject("P") -> return NULL
+   4. Phát hiện obj == NULL -> gọi error(ERR_UNDECLARED_PROCEDURE, ...)
+
+Flow: compileCallSt() -> checkDeclaredProcedure() -> lookupObject() -> error()
+
+
+8. ERR_DUPLICATE_IDENT (err8.kpl)
+----------------------------------
+Code:
+   PROCEDURE P(N:INTEGER; N:CHAR);
+
+Lỗi:
+   Parameter 'N' được khai báo 2 lần.
+
+Nguyên nhân:
+   - Trong cùng một scope (parameter list của procedure P)
+   - Identifier 'N' xuất hiện 2 lần với type khác nhau
+
+Hàm xử lý:
+   1. compileParam() -> gặp TK_IDENT 'N' lần đầu
+   2. Gọi checkFreshIdent("N") (semantics.c:33) -> PASS (chưa có)
+   3. Khai báo parameter N:INTEGER thành công
+   4. Gặp TK_IDENT 'N' lần 2
+   5. Gọi checkFreshIdent("N") -> tìm thấy 'N' trong scope hiện tại
+   6. Gọi error(ERR_DUPLICATE_IDENT, ...)
+
+Flow: compileParam() -> checkFreshIdent() -> findObject() -> error()
+
+
+9. ERR_INVALID_LVALUE (err9.kpl)
+---------------------------------
+Code:
+   MAX := 20;
+
+Lỗi:
+   'MAX' là constant, không thể làm L-value (vế trái phép gán).
+
+Nguyên nhân:
+   - Assignment yêu cầu L-value phải là: variable, parameter, hoặc function name
+   - 'MAX' là OBJ_CONSTANT, không nằm trong các loại hợp lệ
+
+Hàm xử lý:
+   1. compileLValue() -> gặp TK_IDENT 'MAX'
+   2. Gọi checkDeclaredLValueIdent("MAX") (semantics.c:115)
+   3. checkDeclaredLValueIdent() gọi lookupObject("MAX") -> tìm thấy obj
+   4. Kiểm tra switch(obj->kind):
+      - case OBJ_VARIABLE: không match
+      - case OBJ_PARAMETER: không match
+      - case OBJ_FUNCTION: không match
+      - default: match
+   5. Gọi error(ERR_INVALID_LVALUE, ...)
+
+Flow: compileLValue() -> checkDeclaredLValueIdent() -> error()
+
+
+II. 4 LỖI NGỮ NGHĨA MƯỢN MÃ LỖI CÚ PHÁP
+================================================================================
+
+10. ERR_INVALID_CONSTANT (err10.kpl)
+-------------------------------------
+Code:
+   VAR N : MAX;
+
+Lỗi:
+   'MAX' là constant (số), không phải type.
+
+Nguyên nhân:
+   - Trong khai báo biến, sau dấu ':' phải là type
+   - 'MAX' được tìm thấy nhưng là OBJ_CONSTANT, không phải OBJ_TYPE
+
+Hàm xử lý:
+   1. compileVarDecl() -> compileType() -> gặp TK_IDENT 'MAX'
+   2. Gọi checkDeclaredType("MAX") (semantics.c:62)
+   3. checkDeclaredType() gọi lookupObject("MAX") -> tìm thấy obj
+   4. Kiểm tra obj->kind != OBJ_TYPE -> gọi error(ERR_INVALID_TYPE, ...)
+
+Chú ý: Error code là ERR_INVALID_TYPE, nhưng message in ra là "A type expected"
+(đây là syntax error code được dùng cho semantic check)
+
+Flow: compileType() -> checkDeclaredType() -> error()
+
+
+11. ERR_INVALID_TYPE (err11.kpl)
+---------------------------------
+Code:
+   N := T + 5;
+
+Lỗi:
+   'T' là type, không thể dùng trong expression.
+
+Nguyên nhân:
+   - Expression yêu cầu các operand là value (variable, constant, function call)
+   - 'T' là OBJ_TYPE, không có giá trị để tính toán
+
+Hàm xử lý:
+   1. compileFactor() -> gặu TK_IDENT 'T'
+   2. Gọi checkDeclaredIdent("T") (semantics.c:38) -> tìm thấy obj
+   3. Kiểm tra switch(obj->kind):
+      - case OBJ_CONSTANT: không match
+      - case OBJ_VARIABLE: không match
+      - case OBJ_PARAMETER: không match
+      - case OBJ_FUNCTION: không match
+      - default: match (T là OBJ_TYPE)
+   4. Gọi error(ERR_INVALID_FACTOR, ...)
+
+Chú ý: Message là "Invalid factor" - đây là syntax error được dùng cho semantic
+
+Flow: compileFactor() -> checkDeclaredIdent() -> error()
+
+
+12. ERR_INVALID_FACTOR (err12.kpl)
+-----------------------------------
+Code:
+   CALL SUM;
+
+Lỗi:
+   'SUM' là function, không phải procedure.
+
+Nguyên nhân:
+   - CALL statement chỉ dùng cho procedure
+   - 'SUM' được khai báo là FUNCTION, không phải PROCEDURE
+
+Hàm xử lý:
+   1. compileCallSt() -> gặp KW_CALL và TK_IDENT 'SUM'
+   2. Gọi checkDeclaredProcedure("SUM") (semantics.c:99)
+   3. checkDeclaredProcedure() gọi lookupObject("SUM") -> tìm thấy obj
+   4. Kiểm tra obj->kind != OBJ_PROCEDURE -> gọi error(ERR_INVALID_PROCEDURE, ...)
+
+Chú ý: Error code là ERR_INVALID_PROCEDURE, message "A procedure identifier expected"
+
+Flow: compileCallSt() -> checkDeclaredProcedure() -> error()
+
+
+13. ERR_INVALID_PROCEDURE (err13.kpl)
+--------------------------------------
+(Giống err12 - cùng test ERR_INVALID_PROCEDURE)
+
+Code:
+   CALL SUM;
+
+Lỗi:
+   Identifier không phải procedure.
+
+Hàm xử lý:
+   Giống err12 - checkDeclaredProcedure() phát hiện obj->kind != OBJ_PROCEDURE
+
+
+================================================================================
+III. TỔNG KẾT CÁC HÀM KIỂM TRA NGỮ NGHĨA
+================================================================================
+
+Các hàm chính trong semantics.c:
+
+1. lookupObject(char* name)
+   - Tìm kiếm object trong scope chain
+   - Bắt đầu từ currentScope, đi lên các outer scopes
+   - Cuối cùng tìm trong globalObjectList (built-in functions)
+
+2. checkFreshIdent(char* name)
+   - Kiểm tra identifier có bị trùng trong scope hiện tại không
+   - Chỉ tìm trong currentScope, không tìm outer scopes
+   - Dùng khi khai báo identifier mới
+
+3. checkDeclaredIdent(char* name)
+   - Kiểm tra identifier đã được khai báo chưa
+   - Không quan tâm loại (có thể là variable, constant, type, ...)
+   - Return NULL nếu chưa khai báo
+
+4. checkDeclaredConstant(char* name)
+   - Kiểm tra constant đã khai báo và đúng loại OBJ_CONSTANT
+   - Return NULL nếu không tìm thấy hoặc sai loại
+
+5. checkDeclaredType(char* name)
+   - Kiểm tra type đã khai báo và đúng loại OBJ_TYPE
+   - Return NULL nếu không tìm thấy hoặc sai loại
+
+6. checkDeclaredVariable(char* name)
+   - Kiểm tra variable đã khai báo và đúng loại OBJ_VARIABLE
+   - Return NULL nếu không tìm thấy hoặc sai loại
+
+7. checkDeclaredProcedure(char* name)
+   - Kiểm tra procedure đã khai báo và đúng loại OBJ_PROCEDURE
+   - Return NULL nếu không tìm thấy hoặc sai loại
+
+8. checkDeclaredLValueIdent(char* name)
+   - Kiểm tra identifier có thể làm L-value không
+   - Cho phép: OBJ_VARIABLE, OBJ_PARAMETER
+   - Cho phép OBJ_FUNCTION chỉ khi là owner của currentScope
+   - Return NULL nếu không hợp lệ
+
+
+================================================================================
+IV. CƠ CHẾ XỬ LÝ LỖI ĐẶC BIỆT
+================================================================================
+
+Để test được các lỗi trong declaration sections, đã implement cơ chế:
+
+1. error() không exit ngay:
+   - Lưu lại error đầu tiên (line, col, message)
+   - Return để cho parser tiếp tục
+   - Chỉ exit khi gặp error thứ 2
+
+2. Các check functions return NULL:
+   - Thay vì chỉ gọi error() rồi tiếp tục
+   - Return NULL để parser biết có lỗi
+   - Parser check NULL và xử lý (dùng dummy values)
+
+3. exitIfError() cuối compile():
+   - Sau khi parse xong toàn bộ chương trình
+   - Kiểm tra có error nào đã lưu không
+   - Nếu có: print error và exit
+
+Điều này cho phép:
+- Test ERR_UNDECLARED_CONSTANT (lỗi trong CONST declaration)
+- Test ERR_INVALID_CONSTANT (lỗi trong CONST declaration)
+- Parser hoàn thành được phân tích cú pháp trước khi báo lỗi semantic
+
+
+================================================================================
+                              KẾT THÚC PHÂN TÍCH
+================================================================================

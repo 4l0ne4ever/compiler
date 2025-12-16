@@ -8,7 +8,8 @@
 #define __ERROR_H__
 #include "token.h"
 
-typedef enum {
+typedef enum
+{
 	ERR_END_OF_COMMENT,
 	ERR_IDENT_TOO_LONG,
 	ERR_NUMBER_TOO_LONG,
@@ -43,6 +44,8 @@ typedef enum {
 
 void error(ErrorCode err, int lineNo, int colNo);
 void missingToken(TokenType tokenType, int lineNo, int colNo);
-void assert(char* msg);
+void assert(char *msg);
+int hasError();
+void exitIfError();
 
 #endif
