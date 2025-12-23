@@ -1,0 +1,7 @@
+PROGRAM TestErrorConst;
+CONST
+  MAX = 100;
+  LETTER = 'A';
+  CH = +LETTER;
+BEGIN
+END.

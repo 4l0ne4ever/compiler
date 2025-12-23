@@ -1,0 +1,9 @@
+PROGRAM TestErrorWhile;
+VAR x : INTEGER;
+    ch : CHAR;
+BEGIN
+  x := 10;
+  ch := 'A';
+  WHILE x < ch DO 
+    x := x + 1;
+END.

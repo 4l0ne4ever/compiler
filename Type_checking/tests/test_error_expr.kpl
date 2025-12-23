@@ -1,0 +1,7 @@
+PROGRAM TestErrorExpr;
+VAR x : INTEGER;
+    ch : CHAR;
+BEGIN
+  ch := 'A';
+  x := +ch;    
+END.

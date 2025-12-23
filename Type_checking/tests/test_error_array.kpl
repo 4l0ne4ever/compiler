@@ -1,0 +1,6 @@
+PROGRAM TestErrorArray;
+VAR A : ARRAY(. 10 .) OF INTEGER;
+    x : INTEGER;
+BEGIN
+  x := A;
+END.

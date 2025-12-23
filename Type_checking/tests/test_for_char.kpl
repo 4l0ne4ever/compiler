@@ -1,0 +1,7 @@
+PROGRAM TestForChar;
+VAR ch : CHAR;
+    i : INTEGER;
+BEGIN
+  FOR ch := 'A' TO 'Z' DO
+    i := 1;
+END.
