@@ -1,0 +1,9 @@
+PROGRAM ERR2;
+
+PROCEDURE test(x: INTEGER);
+BEGIN
+END;
+
+BEGIN
+  CALL test;
+END.

@@ -1,0 +1,15 @@
+PROGRAM ERR7;
+
+VAR x: INTEGER;
+    y: INTEGER;
+
+PROCEDURE modify(VAR a: INTEGER);
+BEGIN
+  a := a + 1;
+END;
+
+BEGIN
+  x := 10;
+  y := 20;
+  CALL modify(10);
+END.

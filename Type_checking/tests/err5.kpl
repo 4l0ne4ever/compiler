@@ -1,0 +1,14 @@
+PROGRAM ERR5;
+
+VAR x: INTEGER;
+    c: CHAR;
+
+PROCEDURE test(a: INTEGER; b: CHAR);
+BEGIN
+END;
+
+BEGIN
+  x := 10;
+  c := 'A';
+  CALL test(c, x);
+END.

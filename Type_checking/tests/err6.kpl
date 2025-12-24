@@ -1,0 +1,14 @@
+PROGRAM ERR6;
+
+CONST MAX = 100;
+VAR result: INTEGER;
+
+PROCEDURE modify(VAR x: INTEGER);
+BEGIN
+  x := x + 1;
+END;
+
+BEGIN
+  result := 0;
+  CALL modify(MAX);
+END.

@@ -1,0 +1,9 @@
+PROGRAM ERR3;
+
+PROCEDURE test(x: INTEGER; y: CHAR; z: INTEGER);
+BEGIN
+END;
+
+BEGIN
+  CALL test(10, 'A');
+END.

@@ -576,6 +576,9 @@ void compileArgument(Object *param)
   }
   else
   {
+    // VAR parameter requires lvalue (identifier only)
+    if (lookAhead->tokenType != TK_IDENT)
+      error(ERR_INVALID_LVALUE, lookAhead->lineNo, lookAhead->colNo);
     argType = compileLValue();
     checkTypeEquality(argType, param->paramAttrs->type);
   }
@@ -628,6 +631,8 @@ void compileArguments(ObjectNode *paramList)
   case KW_END:
   case KW_ELSE:
   case KW_THEN:
+    if (node != NULL)
+      error(ERR_PARAMETERS_ARGUMENTS_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
     break;
   default:
     error(ERR_INVALID_ARGUMENTS, lookAhead->lineNo, lookAhead->colNo);

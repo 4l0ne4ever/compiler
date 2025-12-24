@@ -1,0 +1,9 @@
+PROGRAM ERR1;
+
+PROCEDURE test;
+BEGIN
+END;
+
+BEGIN
+  CALL test(10);
+END.
