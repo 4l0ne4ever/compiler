@@ -1,0 +1,7 @@
+PROGRAM CODEGEN6;
+   
+VAR N : INTEGER;
+
+BEGIN
+  N := -7;
+END.

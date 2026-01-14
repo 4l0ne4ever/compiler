@@ -81,7 +81,7 @@ int isPredefinedProcedure(Object *proc);
 int isPredefinedFunction(Object *func);
 
 void initCodeBuffer(void);
-void printCodeBuffer(void);
+void printCodeBuffer(char *fileName);
 void cleanCodeBuffer(void);
 
 int serialize(char *fileName);

@@ -293,9 +293,9 @@ void initCodeBuffer(void)
   codeBlock = createCodeBlock(CODE_SIZE);
 }
 
-void printCodeBuffer(void)
+void printCodeBuffer(char *fileName)
 {
-  printCodeBlock(codeBlock);
+  printCodeBlock(codeBlock, fileName);
 }
 
 void cleanCodeBuffer(void)

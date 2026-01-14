@@ -289,6 +289,11 @@ void compileBasicType(void)
 
 void compileParams(void)
 {
+  if (lookAhead->tokenType == SB_RPAR)
+  {
+    // Empty params
+    return;
+  }
   compileParam();
   compileParams2();
 }
@@ -389,12 +394,7 @@ void compileCallSt(void)
   assert("Parsing a call statement ....");
   eat(KW_CALL);
   eat(TK_IDENT);
-  if (lookAhead->tokenType == SB_LPAR)
-  {
-    eat(SB_LPAR);
-    compileArguments();
-    eat(SB_RPAR);
-  }
+  compileActualParams();
   assert("Call statement parsed ....");
 }
 
@@ -451,6 +451,11 @@ void compileForSt(void)
 
 void compileArguments(void)
 {
+  if (lookAhead->tokenType == SB_RPAR)
+  {
+    // Empty arguments
+    return;
+  }
   compileExpression();
   compileArguments2();
 }
@@ -466,6 +471,44 @@ void compileArguments2(void)
     }
     compileExpression();
     compileArguments2();
+  }
+}
+
+void compileActualParams(void)
+{
+  eat(SB_LPAR);
+  compileActualParams1();
+  eat(SB_RPAR);
+}
+
+void compileActualParams1(void)
+{
+  switch (lookAhead->tokenType)
+  {
+  case TK_NUMBER:
+  case TK_CHAR:
+  case TK_IDENT:
+  case SB_LPAR:
+  case SB_PLUS:
+  case SB_MINUS:
+    compileExpression();
+    compileActualParams2();
+    break;
+  case SB_RPAR:
+    break;
+  default:
+    error(ERR_INVALIDARGUMENTS, lookAhead->lineNo, lookAhead->colNo);
+    break;
+  }
+}
+
+void compileActualParams2(void)
+{
+  if (lookAhead->tokenType == SB_COMMA)
+  {
+    eat(SB_COMMA);
+    compileExpression();
+    compileActualParams2();
   }
 }
 

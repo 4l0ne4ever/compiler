@@ -1,4 +1,4 @@
-/* 
+/*
  * @copyright (c) 2008, Hedspi, Hanoi University of Technology
  * @author Huu-Duc Nguyen
  * @version 1.0
@@ -45,6 +45,9 @@ void compileWhileSt(void);
 void compileForSt(void);
 void compileArguments(void);
 void compileArguments2(void);
+void compileActualParams(void);
+void compileActualParams1(void);
+void compileActualParams2(void);
 void compileCondition(void);
 void compileCondition2(void);
 void compileExpression(void);

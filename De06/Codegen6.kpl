@@ -1,0 +1,8 @@
+Program codegen6;
+   
+Var n : integer;
+
+Begin
+  n := - 7;
+  
+End.

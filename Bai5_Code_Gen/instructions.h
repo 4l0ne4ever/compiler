@@ -1,4 +1,4 @@
-/* 
+/*
  * @copyright (c) 2008, Hedspi, Hanoi University of Technology
  * @author Huu-Duc Nguyen
  * @version 1.0
@@ -17,7 +17,8 @@
 
 typedef int WORD;
 
-enum OpCode {
+enum OpCode
+{
   OP_LA,   // Load Address:    t := t + 1; s[t] := base(p) + q;
   OP_LV,   // Load Value:      t := t + 1; s[t] := s[base(p) + q];
   OP_LC,   // load Constant    t := t + 1; s[t] := q;
@@ -49,10 +50,11 @@ enum OpCode {
   OP_GE,   // Greater or Equal t := t - 1;  if s[t] >= s[t+1] then s[t] := 1 else s[t] := 0;
   OP_LE,   // Less or Equal    t := t - 1;  if s[t] >= s[t+1] then s[t] := 1 else s[t] := 0;
 
-  OP_BP    // Break point. Just for debugging
+  OP_BP // Break point. Just for debugging
 };
 
-struct Instruction_ {
+struct Instruction_
+{
   enum OpCode op;
   WORD p;
   WORD q;
@@ -61,56 +63,57 @@ struct Instruction_ {
 typedef struct Instruction_ Instruction;
 typedef int CodeAddress;
 
-struct CodeBlock_ {
-  Instruction* code;
+struct CodeBlock_
+{
+  Instruction *code;
   int codeSize;
   int maxSize;
 };
 
 typedef struct CodeBlock_ CodeBlock;
 
-CodeBlock* createCodeBlock(int maxSize);
-void freeCodeBlock(CodeBlock* codeBlock);
+CodeBlock *createCodeBlock(int maxSize);
+void freeCodeBlock(CodeBlock *codeBlock);
 
-int emitCode(CodeBlock* codeBlock, enum OpCode op, WORD p, WORD q);
+int emitCode(CodeBlock *codeBlock, enum OpCode op, WORD p, WORD q);
 
-int emitLA(CodeBlock* codeBlock, WORD p, WORD q);
-int emitLV(CodeBlock* codeBlock, WORD p, WORD q);
-int emitLC(CodeBlock* codeBlock, WORD q);
-int emitLI(CodeBlock* codeBlock);
-int emitINT(CodeBlock* codeBlock, WORD q);
-int emitDCT(CodeBlock* codeBlock, WORD q);
-int emitJ(CodeBlock* codeBlock, WORD q);
-int emitFJ(CodeBlock* codeBlock, WORD q);
-int emitHL(CodeBlock* codeBlock);
-int emitST(CodeBlock* codeBlock);
-int emitCALL(CodeBlock* codeBlock, WORD p, WORD q);
-int emitEP(CodeBlock* codeBlock);
-int emitEF(CodeBlock* codeBlock);
-int emitRC(CodeBlock* codeBlock);
-int emitRI(CodeBlock* codeBlock);
-int emitWRC(CodeBlock* codeBlock);
-int emitWRI(CodeBlock* codeBlock);
-int emitWLN(CodeBlock* codeBlock);
-int emitAD(CodeBlock* codeBlock);
-int emitSB(CodeBlock* codeBlock);
-int emitML(CodeBlock* codeBlock);
-int emitDV(CodeBlock* codeBlock);
-int emitNEG(CodeBlock* codeBlock);
-int emitCV(CodeBlock* codeBlock);
-int emitEQ(CodeBlock* codeBlock);
-int emitNE(CodeBlock* codeBlock);
-int emitGT(CodeBlock* codeBlock);
-int emitLT(CodeBlock* codeBlock);
-int emitGE(CodeBlock* codeBlock);
-int emitLE(CodeBlock* codeBlock);
+int emitLA(CodeBlock *codeBlock, WORD p, WORD q);
+int emitLV(CodeBlock *codeBlock, WORD p, WORD q);
+int emitLC(CodeBlock *codeBlock, WORD q);
+int emitLI(CodeBlock *codeBlock);
+int emitINT(CodeBlock *codeBlock, WORD q);
+int emitDCT(CodeBlock *codeBlock, WORD q);
+int emitJ(CodeBlock *codeBlock, WORD q);
+int emitFJ(CodeBlock *codeBlock, WORD q);
+int emitHL(CodeBlock *codeBlock);
+int emitST(CodeBlock *codeBlock);
+int emitCALL(CodeBlock *codeBlock, WORD p, WORD q);
+int emitEP(CodeBlock *codeBlock);
+int emitEF(CodeBlock *codeBlock);
+int emitRC(CodeBlock *codeBlock);
+int emitRI(CodeBlock *codeBlock);
+int emitWRC(CodeBlock *codeBlock);
+int emitWRI(CodeBlock *codeBlock);
+int emitWLN(CodeBlock *codeBlock);
+int emitAD(CodeBlock *codeBlock);
+int emitSB(CodeBlock *codeBlock);
+int emitML(CodeBlock *codeBlock);
+int emitDV(CodeBlock *codeBlock);
+int emitNEG(CodeBlock *codeBlock);
+int emitCV(CodeBlock *codeBlock);
+int emitEQ(CodeBlock *codeBlock);
+int emitNE(CodeBlock *codeBlock);
+int emitGT(CodeBlock *codeBlock);
+int emitLT(CodeBlock *codeBlock);
+int emitGE(CodeBlock *codeBlock);
+int emitLE(CodeBlock *codeBlock);
 
-int emitBP(CodeBlock* codeBlock);
+int emitBP(CodeBlock *codeBlock);
 
-void printInstruction(Instruction* instruction);
-void printCodeBlock(CodeBlock* codeBlock);
+void printInstruction(Instruction *instruction);
+void printCodeBlock(CodeBlock *codeBlock, char *fileName);
 
-void loadCode(CodeBlock* codeBlock, FILE* f);
-void saveCode(CodeBlock* codeBlock, FILE* f);
+void loadCode(CodeBlock *codeBlock, FILE *f);
+void saveCode(CodeBlock *codeBlock, FILE *f);
 
 #endif
